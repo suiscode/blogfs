@@ -1,7 +1,18 @@
+import PostUser from "@/components/postUser/PostUser";
 import Image from "next/image";
 import React from "react";
 
-const SingleBlogPage = () => {
+const getData = async (params)=>{
+  const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${params}`)
+  if(!res.ok){
+    throw new Error("something went wrong")
+  }
+  return res.json()
+}
+
+const SingleBlogPage = async ({params}) => {
+  const { slug } = params
+  const post = await getData(slug)
   return (
     <div className='flex gap-[100px]'>
       <div className='flex-[1] relative h-[calc(100vh-200px)] max-[768px]:flex-none'>
@@ -9,10 +20,11 @@ const SingleBlogPage = () => {
       </div>
 
       <div className='flex-[2] flex flex-col gap-[50px]'>
-        <h1 className='text-[64px]'>'title'</h1>
+        <h1 className='text-[64px]'>{post.title}</h1>
         <div className='flex gap-5'>
+        <PostUser userId={post.userId} />
+
           {/* <Suspense fallback={<div>Loading...</div>}>
-            <PostUser userId={post.userId} />
           </Suspense> */}
 
           <div className='flex flex-col gap-[10px]'>
@@ -22,7 +34,7 @@ const SingleBlogPage = () => {
             </span>
           </div>
         </div>
-        <div className='text-xl'>Description</div>
+        <div className='text-xl'>{post.body}</div>
       </div>
     </div>
   );
